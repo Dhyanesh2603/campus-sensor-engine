@@ -66,8 +66,16 @@ app.add_middleware(LoggingMiddleware)
 # Global Exception Handlers
 register_exception_handlers(app)
 
+import os
+from fastapi.staticfiles import StaticFiles
+
 # Include API Routers
 app.include_router(api_v1_router)
+
+# Mount Frontend Dashboard
+frontend_dir = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "frontend")
+if os.path.exists(frontend_dir):
+    app.mount("/dashboard", StaticFiles(directory=frontend_dir, html=True), name="dashboard")
 
 
 @app.get("/", status_code=status.HTTP_200_OK, tags=["System"])
@@ -78,6 +86,7 @@ async def root():
             "version": settings.APP_VERSION,
             "environment": settings.ENVIRONMENT,
             "docs": "/docs",
+            "dashboard": "/dashboard",
         },
         message="Campus Sensor Monitoring & Alert Engine API",
     )

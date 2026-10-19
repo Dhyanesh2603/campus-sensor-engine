@@ -1,0 +1,372 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Campus Sensor Monitoring & Alert Engine</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+  <!-- Header -->
+  <header>
+    <div class="brand">
+      <div class="brand-icon">S</div>
+      <div>
+        <div class="brand-title">Campus Sensor Engine</div>
+        <div class="brand-subtitle">Real-Time Ingestion & Alert Platform</div>
+      </div>
+    </div>
+
+    <div class="nav-status">
+      <div class="status-badge">
+        <span class="status-dot"></span>
+        <span id="system-health-badge">Connecting...</span>
+      </div>
+      <div class="user-controls">
+        <span id="user-info" style="font-size: 0.8rem; color: var(--text-secondary);">Guest Mode</span>
+        <button id="auth-btn" class="btn btn-secondary btn-sm">Login</button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Content -->
+  <main>
+    <!-- Live Metrics Grid -->
+    <section class="metrics-grid" aria-label="Engine Statistics">
+      <article class="metric-card">
+        <div class="metric-header">
+          <span>Active Ingestion Rate</span>
+          <span style="color: var(--accent-cyan);">BURST</span>
+        </div>
+        <div class="metric-value" id="metric-ingest-rate">0 /s</div>
+        <div class="metric-footer">Target SLA: 10,000 readings/sec</div>
+      </article>
+
+      <article class="metric-card">
+        <div class="metric-header">
+          <span>Registered Sensors</span>
+          <span style="color: var(--accent-blue);">TOTAL</span>
+        </div>
+        <div class="metric-value" id="metric-total-sensors">0</div>
+        <div class="metric-footer">Extensible IoT fleet</div>
+      </article>
+
+      <article class="metric-card">
+        <div class="metric-header">
+          <span>Open Alerts</span>
+          <span style="color: var(--accent-red);">UNRESOLVED</span>
+        </div>
+        <div class="metric-value" id="metric-open-alerts" style="color: var(--accent-red);">0</div>
+        <div class="metric-footer">Real-time threshold breaches</div>
+      </article>
+
+      <article class="metric-card">
+        <div class="metric-header">
+          <span>Active Alert Rules</span>
+          <span style="color: var(--accent-green);">CACHED</span>
+        </div>
+        <div class="metric-value" id="metric-active-rules">0</div>
+        <div class="metric-footer">Sub-millisecond memory cache</div>
+      </article>
+    </section>
+
+    <!-- Navigation Tabs -->
+    <nav class="tabs-nav" aria-label="Dashboard Views">
+      <button class="tab-btn active" data-tab="dashboard">Live Dashboard</button>
+      <button class="tab-btn" data-tab="alerts">Alerts Triage</button>
+      <button class="tab-btn" data-tab="rules">Rule Engine</button>
+      <button class="tab-btn" data-tab="sensors">Sensors Directory</button>
+      <button class="tab-btn" data-tab="simulator">Load Simulator</button>
+    </nav>
+
+    <!-- TAB 1: Live Dashboard -->
+    <section id="panel-dashboard" class="tab-panel active">
+      <div class="dashboard-grid">
+        <!-- Live Chart Panel -->
+        <article class="panel-card">
+          <div class="panel-card-header">
+            <h2 class="panel-card-title">Real-Time Telemetry Stream</h2>
+            <span style="font-size: 0.75rem; color: var(--text-muted);">Blue: Temp | Green: Occupancy | Orange: AQI</span>
+          </div>
+          <div class="chart-container">
+            <canvas id="telemetry-chart"></canvas>
+          </div>
+        </article>
+
+        <!-- Quick Ingestion Tester -->
+        <article class="panel-card">
+          <div class="panel-card-header">
+            <h2 class="panel-card-title">Manual Ingestion Test</h2>
+          </div>
+          <form id="test-ingest-form">
+            <div class="form-group">
+              <label for="test-sensor-id">Sensor ID</label>
+              <input type="text" id="test-sensor-id" value="library-floor-2-temp" required autocomplete="off">
+            </div>
+            <div class="form-group">
+              <label for="test-sensor-type">Sensor Type</label>
+              <select id="test-sensor-type">
+                <option value="temperature">temperature</option>
+                <option value="humidity">humidity</option>
+                <option value="occupancy">occupancy</option>
+                <option value="air_quality">air_quality</option>
+                <option value="noise">noise</option>
+                <option value="light">light</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="test-sensor-value">Reading Value</label>
+              <input type="number" id="test-sensor-value" value="38.5" step="0.1" required>
+            </div>
+            <button type="submit" class="btn btn-primary" style="width: 100%;">Dispatch Reading</button>
+          </form>
+        </article>
+      </div>
+    </section>
+
+    <!-- TAB 2: Alerts Triage -->
+    <section id="panel-alerts" class="tab-panel">
+      <article class="panel-card">
+        <div class="panel-card-header">
+          <h2 class="panel-card-title">Campus Alert Center</h2>
+          <span style="font-size: 0.8rem; color: var(--text-secondary);">Deduplicated via Redis Cooldowns</span>
+        </div>
+        <div class="table-container">
+          <table>
+            <thead>
+              <tr>
+                <th>Sensor ID</th>
+                <th>Trigger Value</th>
+                <th>Severity</th>
+                <th>Status</th>
+                <th>Triggered At</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="alerts-table-body">
+              <!-- Populated via JavaScript -->
+            </tbody>
+          </table>
+        </div>
+      </article>
+    </section>
+
+    <!-- TAB 3: Rule Engine -->
+    <section id="panel-rules" class="tab-panel">
+      <article class="panel-card">
+        <div class="panel-card-header">
+          <h2 class="panel-card-title">Alert Rules Management</h2>
+          <button id="open-rule-modal-btn" class="btn btn-primary btn-sm">+ Create New Rule</button>
+        </div>
+        <div class="table-container">
+          <table>
+            <thead>
+              <tr>
+                <th>Rule Name</th>
+                <th>Sensor Type</th>
+                <th>Category</th>
+                <th>Condition</th>
+                <th>Severity</th>
+                <th>Active</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="rules-table-body">
+              <!-- Populated via JavaScript -->
+            </tbody>
+          </table>
+        </div>
+      </article>
+    </section>
+
+    <!-- TAB 4: Sensors Directory -->
+    <section id="panel-sensors" class="tab-panel">
+      <article class="panel-card">
+        <div class="panel-card-header">
+          <h2 class="panel-card-title">Registered Campus Sensors</h2>
+        </div>
+        <div class="table-container">
+          <table>
+            <thead>
+              <tr>
+                <th>Sensor ID</th>
+                <th>Name / Label</th>
+                <th>Type</th>
+                <th>Status</th>
+                <th>Registered At</th>
+              </tr>
+            </thead>
+            <tbody id="sensors-table-body">
+              <!-- Populated via JavaScript -->
+            </tbody>
+          </table>
+        </div>
+      </article>
+    </section>
+
+    <!-- TAB 5: Load Simulator -->
+    <section id="panel-simulator" class="tab-panel">
+      <article class="panel-card">
+        <div class="panel-card-header">
+          <h2 class="panel-card-title">Stress-Testing Simulator Control</h2>
+          <span id="sim-status-badge" class="badge badge-resolved">IDLE</span>
+        </div>
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem;">
+          <div class="form-group">
+            <label for="sim-sensors">Simulated Sensors</label>
+            <select id="sim-sensors">
+              <option value="100">100 Sensors</option>
+              <option value="500">500 Sensors</option>
+              <option value="1000" selected>1,000 Sensors</option>
+              <option value="5000">5,000 Sensors</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="sim-batch-size">Batch Size</label>
+            <input type="number" id="sim-batch-size" value="500" min="10" max="5000">
+          </div>
+
+          <div class="form-group">
+            <label for="sim-frequency">Batches / Sec</label>
+            <input type="number" id="sim-frequency" value="20" min="1" max="1000">
+          </div>
+
+          <div class="form-group">
+            <label for="sim-duration">Duration (seconds)</label>
+            <input type="number" id="sim-duration" value="60" min="5" max="3600">
+          </div>
+        </div>
+
+        <div style="display: flex; gap: 1rem; margin-top: 1rem;">
+          <button id="start-sim-btn" class="btn btn-primary">Start High-Load Simulation</button>
+          <button id="stop-sim-btn" class="btn btn-danger" disabled>Stop Simulation</button>
+        </div>
+      </article>
+    </section>
+  </main>
+
+  <!-- Native Modal: Authentication -->
+  <dialog id="auth-modal" aria-labelledby="auth-modal-title">
+    <div class="modal-header">
+      <h3 id="auth-modal-title" class="modal-title">Authentication</h3>
+      <form method="dialog"><button class="btn btn-sm btn-secondary">✕</button></form>
+    </div>
+    <form id="auth-form">
+      <div class="form-group">
+        <label for="auth-email">Email Address</label>
+        <input type="email" id="auth-email" required autocomplete="username" inputmode="email" enterkeyhint="next">
+      </div>
+      <div class="form-group">
+        <label for="auth-password">Password</label>
+        <input type="password" id="auth-password" required autocomplete="current-password" enterkeyhint="done">
+      </div>
+      <div style="margin-bottom: 1rem;">
+        <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer;">
+          <input type="checkbox" id="auth-is-register">
+          <span>Create new account as Organizer</span>
+        </label>
+      </div>
+      <div class="modal-actions">
+        <form method="dialog"><button class="btn btn-secondary" value="cancel">Cancel</button></form>
+        <button type="submit" class="btn btn-primary">Sign In / Register</button>
+      </div>
+    </form>
+  </dialog>
+
+  <!-- Native Modal: Create Rule -->
+  <dialog id="rule-modal" aria-labelledby="rule-modal-title">
+    <div class="modal-header">
+      <h3 id="rule-modal-title" class="modal-title">Define Alert Rule</h3>
+      <form method="dialog"><button class="btn btn-sm btn-secondary">✕</button></form>
+    </div>
+    <form id="rule-form">
+      <div class="form-group">
+        <label for="rule-name">Rule Name</label>
+        <input type="text" id="rule-name" placeholder="e.g. Server Room High Temp" required>
+      </div>
+      <div class="form-group">
+        <label for="rule-sensor-type">Sensor Type</label>
+        <select id="rule-sensor-type">
+          <option value="temperature">temperature</option>
+          <option value="humidity">humidity</option>
+          <option value="occupancy">occupancy</option>
+          <option value="air_quality">air_quality</option>
+          <option value="noise">noise</option>
+          <option value="light">light</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label for="rule-type-select">Rule Category</label>
+        <select id="rule-type-select">
+          <option value="threshold">Threshold Rule</option>
+          <option value="window">Sliding Window Rule</option>
+        </select>
+      </div>
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem;">
+        <div class="form-group">
+          <label for="rule-operator">Operator</label>
+          <select id="rule-operator">
+            <option value=">">&gt;</option>
+            <option value=">=">&gt;=</option>
+            <option value="<">&lt;</option>
+            <option value="<=">&lt;=</option>
+            <option value="==">==</option>
+            <option value="!=">!=</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="rule-threshold">Threshold</label>
+          <input type="number" id="rule-threshold" step="0.1" value="35.0" required>
+        </div>
+      </div>
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem;">
+        <div class="form-group">
+          <label for="rule-aggregation">Aggregation (Window only)</label>
+          <select id="rule-aggregation">
+            <option value="AVG">AVG</option>
+            <option value="MAX">MAX</option>
+            <option value="MIN">MIN</option>
+            <option value="COUNT">COUNT</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="rule-window">Window (Window only)</label>
+          <select id="rule-window">
+            <option value="1m">1 minute (1m)</option>
+            <option value="5m" selected>5 minutes (5m)</option>
+            <option value="10m">10 minutes (10m)</option>
+            <option value="30m">30 minutes (30m)</option>
+            <option value="1h">1 hour (1h)</option>
+          </select>
+        </div>
+      </div>
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem;">
+        <div class="form-group">
+          <label for="rule-severity">Severity</label>
+          <select id="rule-severity">
+            <option value="LOW">LOW</option>
+            <option value="MEDIUM" selected>MEDIUM</option>
+            <option value="HIGH">HIGH</option>
+            <option value="CRITICAL">CRITICAL</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="rule-cooldown">Cooldown (sec)</label>
+          <input type="number" id="rule-cooldown" value="300" min="0" max="86400">
+        </div>
+      </div>
+      <div class="modal-actions">
+        <form method="dialog"><button class="btn btn-secondary" value="cancel">Cancel</button></form>
+        <button type="submit" class="btn btn-primary">Save Rule</button>
+      </div>
+    </form>
+  </dialog>
+
+  <!-- Toast Notification Container -->
+  <div id="toast-container" aria-live="polite"></div>
+
+  <script type="module" src="js/app.js"></script>
+</body>
+</html>
