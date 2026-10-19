@@ -68,6 +68,7 @@ register_exception_handlers(app)
 
 import os
 from fastapi.staticfiles import StaticFiles
+from fastapi.responses import FileResponse
 
 # Include API Routers
 app.include_router(api_v1_router)
@@ -76,6 +77,10 @@ app.include_router(api_v1_router)
 frontend_dir = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "frontend")
 if os.path.exists(frontend_dir):
     app.mount("/dashboard", StaticFiles(directory=frontend_dir, html=True), name="dashboard")
+
+    @app.get("/dashboard", include_in_schema=False)
+    async def get_dashboard():
+        return FileResponse(os.path.join(frontend_dir, "index.html"))
 
 
 @app.get("/", status_code=status.HTTP_200_OK, tags=["System"])
