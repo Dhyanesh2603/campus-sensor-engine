@@ -1,7 +1,7 @@
 # GDG Tech Wildcard Entry: Backend Development
 ## Project: Campus Sensor Monitoring & Alert Engine
 
-**Candidate Repository**: [https://github.com/Dhyanesh2603/gdg_backend](https://github.com/Dhyanesh2603/gdg_backend)  
+**Candidate Repository**: [https://github.com/Dhyanesh2603/campus-sensor-engine](https://github.com/Dhyanesh2603/campus-sensor-engine)  
 **Track**: Backend Development — Staff Level Production System  
 **Primary Performance Target**: Burst of 10,000 sensor readings in 1 second with simultaneous real-time rule evaluation, deduplication, persistence, and low-latency API serving.
 
@@ -60,8 +60,8 @@ backend/
 
 1. **Clone the repository**:
    ```bash
-   git clone https://github.com/Dhyanesh2603/gdg_backend.git
-   cd gdg_backend
+   git clone https://github.com/Dhyanesh2603/campus-sensor-engine.git
+   cd campus-sensor-engine
    ```
 
 2. **Configure environment**:

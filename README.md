@@ -1,6 +1,6 @@
 # Campus Sensor Monitoring & Alert Engine
 > **GDG Tech Wildcard Entry — Backend Development (Staff Level)**  
-> **Repository**: [https://github.com/Dhyanesh2603/gdg_backend](https://github.com/Dhyanesh2603/gdg_backend)  
+> **Repository**: [https://github.com/Dhyanesh2603/campus-sensor-engine](https://github.com/Dhyanesh2603/campus-sensor-engine)  
 > **Official Submission Document**: [docs/GDG_WILDCARD_SUBMISSION.md](docs/GDG_WILDCARD_SUBMISSION.md)  
 > **Performance Benchmark Report**: [load_testing/PERFORMANCE_REPORT.md](load_testing/PERFORMANCE_REPORT.md)  
 > **Live Web Dashboard**: [http://localhost:8080/dashboard/](http://localhost:8080/dashboard/)  
@@ -138,8 +138,8 @@ backend/
 ### Local Environment Setup
 1. Clone the repository and navigate to the project directory:
    ```bash
-   git clone <repository-url>
-   cd gdg_backend
+   git clone https://github.com/Dhyanesh2603/campus-sensor-engine.git
+   cd campus-sensor-engine
    ```
 
 2. Create and activate a virtual environment:
