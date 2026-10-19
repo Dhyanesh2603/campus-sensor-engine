@@ -1,4 +1,12 @@
 # Campus Sensor Monitoring & Alert Engine
+> **GDG Tech Wildcard Entry — Backend Development (Staff Level)**  
+> **Repository**: [https://github.com/Dhyanesh2603/gdg_backend](https://github.com/Dhyanesh2603/gdg_backend)  
+> **Official Submission Document**: [docs/GDG_WILDCARD_SUBMISSION.md](docs/GDG_WILDCARD_SUBMISSION.md)  
+> **Performance Benchmark Report**: [load_testing/PERFORMANCE_REPORT.md](load_testing/PERFORMANCE_REPORT.md)  
+> **Live Web Dashboard**: [http://localhost:8080/dashboard/](http://localhost:8080/dashboard/)  
+> **Interactive Swagger Documentation**: [http://localhost:8080/docs](http://localhost:8080/docs)
+
+---
 
 ## 1. Project Overview
 
@@ -349,7 +357,7 @@ The simulator provides both a programmatic API and a standalone CLI tool to stre
 
 ### API Trigger
 ```bash
-curl -X POST http://localhost:8000/api/v1/simulator/start \
+curl -X POST http://localhost:8080/api/v1/simulator/start \
   -H "Authorization: Bearer <ORGANIZER_TOKEN>" \
   -H "Content-Type: application/json" \
   -d '{
@@ -379,10 +387,10 @@ python load_testing/benchmark_burst.py
 ### Locust Load Testing
 ```bash
 # Start Locust web interface on http://localhost:8089
-locust -f load_testing/locustfile.py --host http://localhost:8000
+locust -f load_testing/locustfile.py --host http://localhost:8080
 
 # Headless execution (100 users, 20 spawn rate, 60 seconds duration)
-locust -f load_testing/locustfile.py --host http://localhost:8000 --headless -u 100 -r 20 --run-time 60s
+locust -f load_testing/locustfile.py --host http://localhost:8080 --headless -u 100 -r 20 --run-time 60s
 ```
 
 Detailed metrics and analysis are documented in [load_testing/PERFORMANCE_REPORT.md](load_testing/PERFORMANCE_REPORT.md).
