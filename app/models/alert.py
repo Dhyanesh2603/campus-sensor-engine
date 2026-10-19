@@ -1,7 +1,6 @@
 import uuid
 from datetime import datetime
-from sqlalchemy import DateTime, Float, ForeignKey, Index, String
-from sqlalchemy.dialects.postgresql import UUID
+from sqlalchemy import DateTime, Float, ForeignKey, Index, String, Uuid
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 from app.database.base import Base, TimestampMixin
 
@@ -10,12 +9,12 @@ class Alert(Base, TimestampMixin):
     __tablename__ = "alerts"
 
     id: Mapped[uuid.UUID] = mapped_column(
-        UUID(as_uuid=True),
+        Uuid,
         primary_key=True,
         default=uuid.uuid4,
     )
     rule_id: Mapped[uuid.UUID | None] = mapped_column(
-        UUID(as_uuid=True),
+        Uuid,
         ForeignKey("alert_rules.id", ondelete="SET NULL"),
         nullable=True,
         index=True,

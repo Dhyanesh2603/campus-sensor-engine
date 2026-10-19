@@ -1,6 +1,5 @@
 import uuid
-from sqlalchemy import Boolean, Float, Index, Integer, String, Text
-from sqlalchemy.dialects.postgresql import UUID
+from sqlalchemy import Boolean, Float, Index, Integer, String, Text, Uuid
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 from app.database.base import Base, TimestampMixin
 
@@ -9,7 +8,7 @@ class AlertRule(Base, TimestampMixin):
     __tablename__ = "alert_rules"
 
     id: Mapped[uuid.UUID] = mapped_column(
-        UUID(as_uuid=True),
+        Uuid,
         primary_key=True,
         default=uuid.uuid4,
     )
