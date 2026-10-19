@@ -201,6 +201,18 @@ alembic revision --autogenerate -m "describe_changes"
 uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
 ```
 
+### Web Dashboard Interface
+The application includes a built-in single-page web dashboard accessible directly at:
+`http://localhost:8000/dashboard`
+
+The dashboard provides:
+- Real-time telemetry streaming charts (Temperature, Occupancy, Air Quality, Noise, Humidity, Light).
+- Interactive Alert Triage center (1-click Acknowledge, Resolve, and Delete).
+- Live Alert Rule management (Create, toggle enable/disable, configure operators and sliding windows).
+- Sensor Directory with live health indicators.
+- Embedded High-Load Simulator controller with live ingestion rate ticker.
+- Single and batch manual reading injection tester.
+
 ### Running with Docker Compose
 The included `docker-compose.yml` provisions PostgreSQL (with write-optimized parameters), Redis, and a 4-worker FastAPI container:
 
