@@ -80,7 +80,8 @@ if os.path.exists(frontend_dir):
 
     @app.get("/dashboard", include_in_schema=False)
     async def get_dashboard():
-        return FileResponse(os.path.join(frontend_dir, "index.html"))
+        from fastapi.responses import RedirectResponse
+        return RedirectResponse(url="/dashboard/", status_code=status.HTTP_307_TEMPORARY_REDIRECT)
 
 
 @app.get("/", status_code=status.HTTP_200_OK, tags=["System"])
