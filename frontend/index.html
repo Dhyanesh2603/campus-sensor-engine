@@ -5,35 +5,54 @@
   <base href="/dashboard/">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Campus Sensor Monitoring & Alert Engine</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="css/style.css">
   <!-- Chart.js CDN with local fallback -->
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
 </head>
 <body>
 
-  <!-- Top App Navigation -->
+  <!-- Top App Navigation Bar -->
   <header class="app-header">
     <div class="brand-wrapper">
-      <div class="brand-logo">⚡</div>
+      <div class="brand-logo" aria-hidden="true">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+          <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon>
+        </svg>
+      </div>
       <div class="brand-text">
-        <h1>Campus Sensor Engine</h1>
-        <p>Real-Time Ingestion & Alert Platform</p>
+        <div class="brand-title-row">
+          <h1>Campus Sensor Engine</h1>
+          <span class="engine-badge">PROD</span>
+        </div>
+        <p>Real-Time Telemetry & Alert Platform</p>
       </div>
     </div>
 
     <div class="header-right">
-      <div class="health-pill">
+      <div class="health-pill" title="System operational state">
         <span class="pulse-dot"></span>
-        <span id="health-label">Engine Ready</span>
+        <span id="health-label">Engine Online</span>
       </div>
 
-      <button id="quick-burst-top-btn" class="btn btn-primary btn-sm" title="Fire 10,000 telemetry readings burst">
-        ⚡ Fire 10k Burst
+      <button id="quick-burst-top-btn" class="btn btn-outline btn-sm" title="Fire 10,000 telemetry readings burst">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+          <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon>
+        </svg>
+        <span>10k Burst Test</span>
       </button>
 
       <div class="user-badge">
+        <div class="user-avatar" aria-hidden="true">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"></path>
+            <circle cx="12" cy="7" r="4"></circle>
+          </svg>
+        </div>
         <span id="user-display">Guest</span>
-        <button id="auth-action-btn" class="btn btn-secondary btn-sm">Login</button>
+        <button id="auth-action-btn" class="btn btn-ghost btn-sm">Login</button>
       </div>
     </div>
   </header>
@@ -42,74 +61,135 @@
   <main class="app-container">
 
     <!-- KPI Metric Cards Grid -->
-    <section class="kpi-grid" aria-label="System Metrics">
+    <section class="kpi-grid" aria-label="System Performance Metrics">
+      <!-- KPI 1: Ingestion Throughput -->
       <article class="kpi-card rate-kpi">
-        <div class="kpi-title">
-          <span>Ingestion Throughput</span>
-          <span style="color: var(--neon-cyan);">LIVE</span>
+        <div class="kpi-top">
+          <span class="kpi-label">Ingestion Throughput</span>
+          <span class="kpi-pill kpi-pill-blue">LIVE STREAM</span>
         </div>
-        <div class="kpi-value" id="kpi-rate">0 /s</div>
-        <div class="kpi-sub">
-          <span>Target Capacity:</span>
-          <strong style="color: var(--neon-blue);">10,000 readings/sec</strong>
+        <div class="kpi-main">
+          <div class="kpi-value" id="kpi-rate">0 <span class="kpi-unit">/s</span></div>
+        </div>
+        <div class="kpi-footer">
+          <span class="kpi-target-label">Target SLA:</span>
+          <span class="kpi-target-value">10,000 readings/sec</span>
         </div>
       </article>
 
+      <!-- KPI 2: IoT Sensor Fleet -->
       <article class="kpi-card">
-        <div class="kpi-title">
-          <span>IoT Sensor Fleet</span>
-          <span style="color: var(--neon-blue);">REGISTERED</span>
+        <div class="kpi-top">
+          <span class="kpi-label">Active Sensor Fleet</span>
+          <span class="kpi-pill kpi-pill-cyan">REGISTERED</span>
         </div>
-        <div class="kpi-value" id="kpi-sensors">0</div>
-        <div class="kpi-sub">
-          <span>Campus Zones:</span>
-          <strong>7 facilities monitored</strong>
+        <div class="kpi-main">
+          <div class="kpi-value" id="kpi-sensors">0</div>
+        </div>
+        <div class="kpi-footer">
+          <span class="kpi-target-label">Coverage:</span>
+          <span class="kpi-target-value">7 Campus Facilities</span>
         </div>
       </article>
 
+      <!-- KPI 3: Open Incidents -->
       <article class="kpi-card alert-kpi">
-        <div class="kpi-title">
-          <span>Open Incidents</span>
-          <span style="color: var(--neon-rose);">ALERT</span>
+        <div class="kpi-top">
+          <span class="kpi-label">Active Incidents</span>
+          <span class="kpi-pill kpi-pill-rose">TRIAGE</span>
         </div>
-        <div class="kpi-value" id="kpi-alerts" style="color: var(--neon-rose);">0</div>
-        <div class="kpi-sub">
-          <span>Deduplication:</span>
-          <strong>Redis cooldown active</strong>
+        <div class="kpi-main">
+          <div class="kpi-value kpi-val-alert" id="kpi-alerts">0</div>
+        </div>
+        <div class="kpi-footer">
+          <span class="kpi-target-label">Deduplication:</span>
+          <span class="kpi-target-value">Redis Cooldown Active</span>
         </div>
       </article>
 
+      <!-- KPI 4: In-Memory Rule Engine -->
       <article class="kpi-card">
-        <div class="kpi-title">
-          <span>Evaluated Rules</span>
-          <span style="color: var(--neon-emerald);">IN-MEMORY</span>
+        <div class="kpi-top">
+          <span class="kpi-label">Evaluated Rules</span>
+          <span class="kpi-pill kpi-pill-emerald">IN-MEMORY</span>
         </div>
-        <div class="kpi-value" id="kpi-rules">0</div>
-        <div class="kpi-sub">
-          <span>Evaluation Latency:</span>
-          <strong style="color: var(--neon-emerald);">&lt; 1.5ms per batch</strong>
+        <div class="kpi-main">
+          <div class="kpi-value" id="kpi-rules">0</div>
+        </div>
+        <div class="kpi-footer">
+          <span class="kpi-target-label">Eval Latency:</span>
+          <span class="kpi-target-value">&lt; 1.5ms per batch</span>
         </div>
       </article>
     </section>
 
     <!-- Navigation Tabs -->
     <nav class="view-tabs" aria-label="Dashboard Views">
-      <button class="view-tab active" data-tab="telemetry">📊 Live Telemetry & Campus Zones</button>
-      <button class="view-tab" data-tab="alerts">🚨 Alerts Incident Center</button>
-      <button class="view-tab" data-tab="rules">⚙️ Rule Studio</button>
-      <button class="view-tab" data-tab="simulator">⚡ 10k Burst Simulator</button>
-      <button class="view-tab" data-tab="sensors">📡 Sensor Fleet</button>
+      <button class="view-tab active" data-tab="telemetry">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline>
+        </svg>
+        <span>Live Telemetry &amp; Facilities</span>
+      </button>
+
+      <button class="view-tab" data-tab="alerts">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path>
+          <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
+        </svg>
+        <span>Alert Incident Center</span>
+      </button>
+
+      <button class="view-tab" data-tab="rules">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="4" y1="21" x2="4" y2="14"></line>
+          <line x1="4" y1="10" x2="4" y2="3"></line>
+          <line x1="12" y1="21" x2="12" y2="12"></line>
+          <line x1="12" y1="8" x2="12" y2="3"></line>
+          <line x1="20" y1="21" x2="20" y2="16"></line>
+          <line x1="20" y1="12" x2="20" y2="3"></line>
+          <line x1="1" y1="14" x2="7" y2="14"></line>
+          <line x1="9" y1="8" x2="15" y2="8"></line>
+          <line x1="17" y1="16" x2="23" y2="16"></line>
+        </svg>
+        <span>Rule Studio</span>
+      </button>
+
+      <button class="view-tab" data-tab="simulator">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon>
+        </svg>
+        <span>10k Burst Simulator</span>
+      </button>
+
+      <button class="view-tab" data-tab="sensors">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <rect x="2" y="2" width="20" height="8" rx="2" ry="2"></rect>
+          <rect x="2" y="14" width="20" height="8" rx="2" ry="2"></rect>
+          <line x1="6" y1="6" x2="6.01" y2="6"></line>
+          <line x1="6" y1="18" x2="6.01" y2="18"></line>
+        </svg>
+        <span>Sensor Fleet</span>
+      </button>
     </nav>
 
     <!-- TAB 1: Live Telemetry & Campus Zones -->
     <section id="panel-telemetry" class="tab-content active">
-      <div class="grid-2col">
+      <div class="grid-dashboard-main">
         <!-- Interactive Multi-Stream Telemetry Chart -->
-        <article class="glass-panel">
-          <div class="panel-title-bar">
-            <h2 class="panel-title">Real-Time Telemetry Stream</h2>
-            <div style="display: flex; gap: 0.5rem;">
-              <button id="chart-refresh-btn" class="btn btn-secondary btn-sm">Refresh</button>
+        <article class="surface-card chart-panel">
+          <div class="panel-header">
+            <div>
+              <h2 class="panel-title">Real-Time Telemetry Stream</h2>
+              <p class="panel-subtitle">Rolling sliding-window telemetry across temperature, occupancy, and air quality</p>
+            </div>
+            <div class="panel-actions">
+              <button id="chart-refresh-btn" class="btn btn-secondary btn-sm" title="Refresh Telemetry">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67"></path>
+                </svg>
+                <span>Refresh</span>
+              </button>
             </div>
           </div>
           <div class="chart-box">
@@ -118,40 +198,55 @@
         </article>
 
         <!-- Quick Telemetry Injector -->
-        <article class="glass-panel">
-          <div class="panel-title-bar">
-            <h2 class="panel-title">Manual Telemetry Injector</h2>
-          </div>
-          <form id="manual-ingest-form">
-            <div class="form-field">
-              <label class="field-label" for="manual-sensor-id">Sensor ID</label>
-              <input type="text" id="manual-sensor-id" class="input-box" value="library-floor-2-temp" required autocomplete="off">
+        <article class="surface-card form-panel">
+          <div class="panel-header">
+            <div>
+              <h2 class="panel-title">Manual Telemetry Injector</h2>
+              <p class="panel-subtitle">Test single sensor ingest &amp; rule evaluation</p>
             </div>
+          </div>
+          <form id="manual-ingest-form" class="clean-form">
             <div class="form-field">
-              <label class="field-label" for="manual-sensor-type">Sensor Type</label>
+              <label class="field-label" for="manual-sensor-id">Sensor Identifier</label>
+              <input type="text" id="manual-sensor-id" class="input-box mono" value="library-floor-2-temp" required autocomplete="off">
+            </div>
+
+            <div class="form-field">
+              <label class="field-label" for="manual-sensor-type">Telemetry Type</label>
               <select id="manual-sensor-type" class="input-box">
                 <option value="temperature">temperature (°C)</option>
                 <option value="humidity">humidity (%)</option>
-                <option value="occupancy">occupancy (people)</option>
+                <option value="occupancy">occupancy (count)</option>
                 <option value="air_quality">air_quality (AQI)</option>
                 <option value="noise">noise (dB)</option>
                 <option value="light">light (lux)</option>
               </select>
             </div>
+
             <div class="form-field">
               <label class="field-label" for="manual-value">Reading Value</label>
-              <input type="number" id="manual-value" class="input-box" step="0.1" value="38.5" required>
+              <input type="number" id="manual-value" class="input-box mono" step="0.1" value="38.5" required>
             </div>
-            <button type="submit" class="btn btn-primary" style="width: 100%;">Dispatch Single Reading</button>
+
+            <button type="submit" class="btn btn-primary" style="width: 100%;">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                <line x1="22" y1="2" x2="11" y2="13"></line>
+                <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+              </svg>
+              <span>Dispatch Reading</span>
+            </button>
           </form>
         </article>
       </div>
 
       <!-- Campus Zones Health Map -->
-      <article class="glass-panel">
-        <div class="panel-title-bar">
-          <h2 class="panel-title">Campus Facilities & Zone Health</h2>
-          <span style="font-size: 0.8rem; color: var(--text-dim);">Live node cluster status</span>
+      <article class="surface-card">
+        <div class="panel-header">
+          <div>
+            <h2 class="panel-title">Campus Facilities &amp; Zone Health</h2>
+            <p class="panel-subtitle">Environmental sensor nodes mapped across physical campus facilities</p>
+          </div>
+          <span class="status-summary-tag">7 Facilities Active</span>
         </div>
         <div class="zones-grid" id="zones-container">
           <!-- Populated by JavaScript -->
@@ -161,33 +256,47 @@
 
     <!-- TAB 2: Alerts Incident Center -->
     <section id="panel-alerts" class="tab-content">
-      <article class="glass-panel">
-        <div class="panel-title-bar">
-          <h2 class="panel-title">Incident Center & Alert Triage</h2>
-          <div style="display: flex; gap: 0.5rem; align-items: center;">
-            <input type="text" id="alert-search-box" class="input-box" placeholder="Search sensor or severity..." style="min-height: 32px; padding: 0.3rem 0.6rem; font-size: 0.8rem;">
-            <button id="refresh-alerts-btn" class="btn btn-secondary btn-sm">Refresh</button>
+      <article class="surface-card">
+        <div class="panel-header">
+          <div>
+            <h2 class="panel-title">Incident Center &amp; Alert Triage</h2>
+            <p class="panel-subtitle">Real-time alerts triggered by threshold and sliding-window violations with Redis cooldown suppression</p>
+          </div>
+          <div class="filter-controls">
+            <div class="search-wrap">
+              <svg class="search-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="11" cy="11" r="8"></circle>
+                <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+              </svg>
+              <input type="text" id="alert-search-box" class="input-box search-input" placeholder="Search sensor ID or severity...">
+            </div>
+            <button id="refresh-alerts-btn" class="btn btn-secondary btn-sm">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67"></path>
+              </svg>
+              <span>Refresh</span>
+            </button>
           </div>
         </div>
 
-        <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
-          <button class="btn btn-secondary btn-sm alert-filter-btn active" data-filter="ALL">All Alerts</button>
-          <button class="btn btn-secondary btn-sm alert-filter-btn" data-filter="OPEN">Open</button>
-          <button class="btn btn-secondary btn-sm alert-filter-btn" data-filter="ACKNOWLEDGED">Acknowledged</button>
-          <button class="btn btn-secondary btn-sm alert-filter-btn" data-filter="RESOLVED">Resolved</button>
+        <div class="segmented-filter-bar" role="group" aria-label="Alert status filters">
+          <button class="filter-pill alert-filter-btn active" data-filter="ALL">All Alerts</button>
+          <button class="filter-pill alert-filter-btn" data-filter="OPEN">Open Incidents</button>
+          <button class="filter-pill alert-filter-btn" data-filter="ACKNOWLEDGED">Acknowledged</button>
+          <button class="filter-pill alert-filter-btn" data-filter="RESOLVED">Resolved</button>
         </div>
 
-        <div class="data-table-container">
+        <div class="data-table-container" tabindex="0" role="region" aria-label="Incident Alerts Table">
           <table class="data-table">
             <thead>
               <tr>
-                <th>Sensor Identifier</th>
-                <th>Trigger Value</th>
-                <th>Threshold</th>
-                <th>Severity</th>
-                <th>Lifecycle Status</th>
-                <th>Triggered At</th>
-                <th>Actions</th>
+                <th scope="col">Sensor Identifier</th>
+                <th scope="col">Trigger Value</th>
+                <th scope="col">Threshold</th>
+                <th scope="col">Severity</th>
+                <th scope="col">Status</th>
+                <th scope="col">Triggered At</th>
+                <th scope="col">Actions</th>
               </tr>
             </thead>
             <tbody id="alerts-tbody">
@@ -200,22 +309,32 @@
 
     <!-- TAB 3: Rule Studio -->
     <section id="panel-rules" class="tab-content">
-      <article class="glass-panel">
-        <div class="panel-title-bar">
-          <h2 class="panel-title">Alert Rule Studio</h2>
-          <button id="open-create-rule-btn" class="btn btn-primary btn-sm">+ Define New Rule</button>
+      <article class="surface-card">
+        <div class="panel-header">
+          <div>
+            <h2 class="panel-title">Alert Rule Studio</h2>
+            <p class="panel-subtitle">In-memory rule engine evaluating threshold conditions and Redis sliding-window rolling aggregations</p>
+          </div>
+          <button id="open-create-rule-btn" class="btn btn-primary btn-sm">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="12" y1="5" x2="12" y2="19"></line>
+              <line x1="5" y1="12" x2="19" y2="12"></line>
+            </svg>
+            <span>Define New Rule</span>
+          </button>
         </div>
-        <div class="data-table-container">
+
+        <div class="data-table-container" tabindex="0" role="region" aria-label="Alert Rules Table">
           <table class="data-table">
             <thead>
               <tr>
-                <th>Rule Name</th>
-                <th>Sensor Type</th>
-                <th>Category</th>
-                <th>Evaluation Condition</th>
-                <th>Severity</th>
-                <th>State</th>
-                <th>Actions</th>
+                <th scope="col">Rule Name</th>
+                <th scope="col">Sensor Type</th>
+                <th scope="col">Category</th>
+                <th scope="col">Condition</th>
+                <th scope="col">Severity</th>
+                <th scope="col">State</th>
+                <th scope="col">Actions</th>
               </tr>
             </thead>
             <tbody id="rules-tbody">
@@ -229,40 +348,56 @@
     <!-- TAB 4: 10k Burst Simulator -->
     <section id="panel-simulator" class="tab-content">
       <!-- 10k Burst Instant Benchmark Showcase -->
-      <article class="glass-panel" style="border: 1px solid var(--border-bright);">
-        <div class="panel-title-bar">
-          <h2 class="panel-title">⚡ 10,000 Sensor Readings / 1 Second Burst Showcase</h2>
-          <span class="badge badge-low">Primary Goal Benchmark</span>
-        </div>
-        <p style="font-size: 0.85rem; color: var(--text-dim);">
-          Dispatches 10,000 real sensor telemetry readings concurrently across 20 parallel batches directly to <code>POST /api/v1/readings</code>. Measures wall-clock throughput, rule evaluations, and percentile latencies.
-        </p>
+      <article class="surface-card benchmark-showcase-panel">
+        <div class="benchmark-header">
+          <div>
+            <div class="benchmark-tag-row">
+              <span class="badge badge-primary">Primary SLA Target</span>
+              <span class="badge badge-success">10,000 readings / 1.0s</span>
+            </div>
+            <h2 class="benchmark-title">High-Throughput Burst Benchmark</h2>
+            <p class="benchmark-desc">
+              Dispatches 10,000 real sensor telemetry readings across 20 concurrent HTTP batches directly to <code>POST /api/v1/readings</code>. Measures wall-clock throughput, in-memory rule evaluations, and percentile latencies.
+            </p>
+          </div>
 
-        <div style="display: flex; gap: 1rem; align-items: center; margin-top: 0.5rem;">
-          <button id="run-burst-btn" class="btn btn-primary">
-            🚀 Launch 10,000 Readings Burst Now
-          </button>
-          <span id="burst-status-text" style="font-size: 0.85rem; color: var(--text-dim); font-family: var(--font-mono);">Ready</span>
+          <div class="benchmark-actions">
+            <button id="run-burst-btn" class="btn btn-primary btn-lg">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon>
+              </svg>
+              <span>Launch 10,000 Burst</span>
+            </button>
+          </div>
         </div>
 
-        <div class="burst-progress-track">
+        <div class="burst-status-row">
+          <span class="status-label">Engine Status:</span>
+          <span id="burst-status-text" class="status-value mono">Ready for execution</span>
+        </div>
+
+        <div class="burst-progress-track" aria-hidden="true">
           <div id="burst-progress-bar" class="burst-progress-bar"></div>
         </div>
 
-        <div id="burst-results-box" style="display: none; margin-top: 1rem; padding: 1rem; background: rgba(0,0,0,0.4); border-radius: var(--radius-sm); border: 1px solid var(--border-subtle); font-family: var(--font-mono); font-size: 0.85rem;">
+        <div id="burst-results-box" class="burst-results-matrix" style="display: none;">
           <!-- Benchmark metrics injected via JS -->
         </div>
       </article>
 
       <!-- Background Continuous Simulator -->
-      <article class="glass-panel">
-        <div class="panel-title-bar">
-          <h2 class="panel-title">Continuous Background Simulator Engine</h2>
-          <span id="sim-running-pill" class="badge badge-resolved">STOPPED</span>
+      <article class="surface-card">
+        <div class="panel-header">
+          <div>
+            <h2 class="panel-title">Continuous Background Simulator Engine</h2>
+            <p class="panel-subtitle">Stress-test the ingestion engine under sustained multi-sensor synthetic telemetry</p>
+          </div>
+          <span id="sim-running-pill" class="badge badge-resolved">IDLE</span>
         </div>
-        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem;">
+
+        <div class="simulator-config-grid">
           <div class="form-field">
-            <label class="field-label" for="sim-sensor-count">Sensor Count</label>
+            <label class="field-label" for="sim-sensor-count">Sensor Fleet Count</label>
             <select id="sim-sensor-count" class="input-box">
               <option value="100">100 Sensors (Quick Test)</option>
               <option value="500">500 Sensors (Department)</option>
@@ -271,42 +406,54 @@
             </select>
           </div>
           <div class="form-field">
-            <label class="field-label" for="sim-batch-size">Batch Size</label>
-            <input type="number" id="sim-batch-size" class="input-box" value="500" min="50" max="5000">
+            <label class="field-label" for="sim-batch-size">Batch Size (Readings/Req)</label>
+            <input type="number" id="sim-batch-size" class="input-box mono" value="500" min="50" max="5000">
           </div>
           <div class="form-field">
             <label class="field-label" for="sim-freq">Frequency (Batches/Sec)</label>
-            <input type="number" id="sim-freq" class="input-box" value="20" min="1" max="500">
+            <input type="number" id="sim-freq" class="input-box mono" value="20" min="1" max="500">
           </div>
           <div class="form-field">
             <label class="field-label" for="sim-dur">Duration (Seconds)</label>
-            <input type="number" id="sim-dur" class="input-box" value="60" min="10" max="3600">
+            <input type="number" id="sim-dur" class="input-box mono" value="60" min="10" max="3600">
           </div>
         </div>
 
-        <div style="display: flex; gap: 1rem; margin-top: 0.5rem;">
-          <button id="start-continuous-sim-btn" class="btn btn-primary">Start Continuous Generator</button>
-          <button id="stop-continuous-sim-btn" class="btn btn-danger" disabled>Stop Generator</button>
+        <div class="simulator-actions">
+          <button id="start-continuous-sim-btn" class="btn btn-primary">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+              <polygon points="5 3 19 12 5 21 5 3"></polygon>
+            </svg>
+            <span>Start Generator</span>
+          </button>
+          <button id="stop-continuous-sim-btn" class="btn btn-danger" disabled>
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="6" y="6" width="12" height="12"></rect>
+            </svg>
+            <span>Stop Generator</span>
+          </button>
         </div>
       </article>
     </section>
 
     <!-- TAB 5: Sensor Fleet -->
     <section id="panel-sensors" class="tab-content">
-      <article class="glass-panel">
-        <div class="panel-title-bar">
-          <h2 class="panel-title">Active Sensor Inventory</h2>
-          <span style="font-size: 0.8rem; color: var(--text-dim);">Auto-registered on ingestion</span>
+      <article class="surface-card">
+        <div class="panel-header">
+          <div>
+            <h2 class="panel-title">Active Sensor Inventory</h2>
+            <p class="panel-subtitle">Autonomous hardware sensor directory with metadata auto-registration</p>
+          </div>
         </div>
-        <div class="data-table-container">
+        <div class="data-table-container" tabindex="0" role="region" aria-label="Sensor Fleet Table">
           <table class="data-table">
             <thead>
               <tr>
-                <th>Hardware ID</th>
-                <th>Designation</th>
-                <th>Telemetry Type</th>
-                <th>Operational Status</th>
-                <th>First Seen At</th>
+                <th scope="col">Hardware Identifier</th>
+                <th scope="col">Designation</th>
+                <th scope="col">Telemetry Type</th>
+                <th scope="col">Operational State</th>
+                <th scope="col">Registered At</th>
               </tr>
             </thead>
             <tbody id="sensors-tbody">
@@ -322,39 +469,51 @@
   <!-- MODAL: Define Rule -->
   <dialog id="modal-rule" class="custom-modal">
     <div class="modal-head">
-      <h3 class="modal-title">Define New Alert Rule</h3>
-      <form method="dialog"><button class="btn btn-sm btn-secondary">✕</button></form>
+      <div>
+        <h3 class="modal-title">Define Alert Rule</h3>
+        <p class="modal-subtitle">Configure scalar threshold or rolling sliding-window rule</p>
+      </div>
+      <form method="dialog">
+        <button class="modal-close-btn" aria-label="Close dialog">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="18" y1="6" x2="6" y2="18"></line>
+            <line x1="6" y1="6" x2="18" y2="18"></line>
+          </svg>
+        </button>
+      </form>
     </div>
-    <form id="form-create-rule">
+    <form id="form-create-rule" class="modal-form">
       <div class="form-field">
         <label class="field-label" for="rule-in-name">Rule Name</label>
         <input type="text" id="rule-in-name" class="input-box" placeholder="e.g. Critical High Temperature" required>
       </div>
 
-      <div class="form-field">
-        <label class="field-label" for="rule-in-type">Target Sensor Type</label>
-        <select id="rule-in-type" class="input-box">
-          <option value="temperature">temperature (°C)</option>
-          <option value="humidity">humidity (%)</option>
-          <option value="occupancy">occupancy (count)</option>
-          <option value="air_quality">air_quality (AQI)</option>
-          <option value="noise">noise (dB)</option>
-          <option value="light">light (lux)</option>
-        </select>
+      <div class="form-row-2">
+        <div class="form-field">
+          <label class="field-label" for="rule-in-type">Target Sensor Type</label>
+          <select id="rule-in-type" class="input-box">
+            <option value="temperature">temperature (°C)</option>
+            <option value="humidity">humidity (%)</option>
+            <option value="occupancy">occupancy (count)</option>
+            <option value="air_quality">air_quality (AQI)</option>
+            <option value="noise">noise (dB)</option>
+            <option value="light">light (lux)</option>
+          </select>
+        </div>
+
+        <div class="form-field">
+          <label class="field-label" for="rule-in-category">Evaluation Mode</label>
+          <select id="rule-in-category" class="input-box">
+            <option value="threshold">Instant Scalar Threshold</option>
+            <option value="window">Redis Sliding Window</option>
+          </select>
+        </div>
       </div>
 
-      <div class="form-field">
-        <label class="field-label" for="rule-in-category">Rule Architecture Category</label>
-        <select id="rule-in-category" class="input-box">
-          <option value="threshold">Instant Scalar Threshold</option>
-          <option value="window">Redis Rolling Sliding Window</option>
-        </select>
-      </div>
-
-      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem;">
+      <div class="form-row-2">
         <div class="form-field">
           <label class="field-label" for="rule-in-op">Operator</label>
-          <select id="rule-in-op" class="input-box">
+          <select id="rule-in-op" class="input-box mono">
             <option value=">">&gt; (Greater than)</option>
             <option value=">=">&gt;= (Greater or equal)</option>
             <option value="<">&lt; (Less than)</option>
@@ -365,14 +524,14 @@
         </div>
         <div class="form-field">
           <label class="field-label" for="rule-in-thresh">Threshold Value</label>
-          <input type="number" id="rule-in-thresh" class="input-box" step="0.1" value="35.0" required>
+          <input type="number" id="rule-in-thresh" class="input-box mono" step="0.1" value="35.0" required>
         </div>
       </div>
 
       <!-- Window specific settings -->
-      <div id="window-rule-fields" style="display: none; grid-template-columns: 1fr 1fr; gap: 0.75rem;">
+      <div id="window-rule-fields" class="form-row-2" style="display: none;">
         <div class="form-field">
-          <label class="field-label" for="rule-in-agg">Aggregation</label>
+          <label class="field-label" for="rule-in-agg">Aggregation Function</label>
           <select id="rule-in-agg" class="input-box">
             <option value="AVG">AVG (Mean)</option>
             <option value="MAX">MAX (Peak)</option>
@@ -381,7 +540,7 @@
           </select>
         </div>
         <div class="form-field">
-          <label class="field-label" for="rule-in-window">Time Window</label>
+          <label class="field-label" for="rule-in-window">Rolling Window</label>
           <select id="rule-in-window" class="input-box">
             <option value="1m">1 minute (1m)</option>
             <option value="5m" selected>5 minutes (5m)</option>
@@ -392,9 +551,9 @@
         </div>
       </div>
 
-      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem;">
+      <div class="form-row-2">
         <div class="form-field">
-          <label class="field-label" for="rule-in-sev">Severity</label>
+          <label class="field-label" for="rule-in-sev">Severity Level</label>
           <select id="rule-in-sev" class="input-box">
             <option value="LOW">LOW</option>
             <option value="MEDIUM" selected>MEDIUM</option>
@@ -403,14 +562,14 @@
           </select>
         </div>
         <div class="form-field">
-          <label class="field-label" for="rule-in-cooldown">Deduplication Cooldown (s)</label>
-          <input type="number" id="rule-in-cooldown" class="input-box" value="300" min="0" max="86400">
+          <label class="field-label" for="rule-in-cooldown">Cooldown Deduplication (s)</label>
+          <input type="number" id="rule-in-cooldown" class="input-box mono" value="300" min="0" max="86400">
         </div>
       </div>
 
       <div class="modal-foot">
         <form method="dialog"><button class="btn btn-secondary" value="cancel">Cancel</button></form>
-        <button type="submit" class="btn btn-primary">Save & Register Rule</button>
+        <button type="submit" class="btn btn-primary">Save &amp; Register Rule</button>
       </div>
     </form>
   </dialog>
@@ -418,10 +577,20 @@
   <!-- MODAL: Authentication -->
   <dialog id="modal-auth" class="custom-modal">
     <div class="modal-head">
-      <h3 class="modal-title">Account Authentication</h3>
-      <form method="dialog"><button class="btn btn-sm btn-secondary">✕</button></form>
+      <div>
+        <h3 class="modal-title">Organizer Authentication</h3>
+        <p class="modal-subtitle">Sign in or register an Organizer role account</p>
+      </div>
+      <form method="dialog">
+        <button class="modal-close-btn" aria-label="Close dialog">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="18" y1="6" x2="6" y2="18"></line>
+            <line x1="6" y1="6" x2="18" y2="18"></line>
+          </svg>
+        </button>
+      </form>
     </div>
-    <form id="form-auth">
+    <form id="form-auth" class="modal-form">
       <div class="form-field">
         <label class="field-label" for="auth-email-in">Email Address</label>
         <input type="email" id="auth-email-in" class="input-box" value="organizer@campus.edu" required autocomplete="username" inputmode="email">
@@ -430,14 +599,14 @@
         <label class="field-label" for="auth-pass-in">Password</label>
         <input type="password" id="auth-pass-in" class="input-box" value="Password123!" required autocomplete="current-password">
       </div>
-      <div style="margin-bottom: 1.25rem;">
-        <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer; font-size: 0.85rem; color: var(--text-dim);">
+      <div class="form-field checkbox-field">
+        <label class="checkbox-label">
           <input type="checkbox" id="auth-reg-toggle">
-          <span>Register as new Organizer account</span>
+          <span>Register as a new Organizer account</span>
         </label>
       </div>
       <div class="modal-foot">
-        <button type="button" id="quick-demo-auth-btn" class="btn btn-secondary" style="margin-right: auto;">
+        <button type="button" id="quick-demo-auth-btn" class="btn btn-outline" style="margin-right: auto;">
           ⚡ Quick Demo Login
         </button>
         <form method="dialog"><button class="btn btn-secondary" value="cancel">Cancel</button></form>
