@@ -6,7 +6,7 @@ from typing import Any
 import httpx
 import psutil
 
-BASE_URL = "http://localhost:8000"
+BASE_URL = "http://localhost:8080"
 TOTAL_BURST_READINGS = 10000
 BATCH_SIZE = 500  # 20 batches of 500 readings fired concurrently
 CONCURRENT_BATCHES = TOTAL_BURST_READINGS // BATCH_SIZE
