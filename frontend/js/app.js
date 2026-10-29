@@ -59,6 +59,13 @@ async function syncAuth() {
   const authBtn = document.getElementById("auth-action-btn");
 
   if (!api.token) {
+    try {
+      // Auto-authenticate as seeded demo organizer in development if no token exists
+      await api.login("organizer@campus.edu", "Password123!");
+    } catch (_) {}
+  }
+
+  if (!api.token) {
     if (userDisplay) userDisplay.textContent = "Guest";
     if (authBtn) authBtn.textContent = "Login";
     state.currentUser = null;
