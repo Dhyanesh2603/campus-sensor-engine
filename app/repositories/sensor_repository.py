@@ -58,8 +58,12 @@ class SensorRepository(BaseRepository[Sensor]):
             stmt = pg_insert(Sensor).values(records_to_insert)
             stmt = stmt.on_conflict_do_nothing(index_elements=["id"])
             await self.session.execute(stmt)
+        elif dialect == "sqlite":
+            from sqlalchemy.dialects.sqlite import insert as sqlite_insert
+            stmt = sqlite_insert(Sensor).values(records_to_insert)
+            stmt = stmt.on_conflict_do_nothing(index_elements=["id"])
+            await self.session.execute(stmt)
         else:
-            # Fallback for SQLite in tests
             for record in records_to_insert:
                 existing = await self.get_by_id(record["id"])
                 if not existing:

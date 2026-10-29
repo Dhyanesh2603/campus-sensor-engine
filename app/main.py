@@ -7,7 +7,7 @@ from app.api.v1 import api_v1_router
 from app.config.settings import get_settings
 from app.core.logging import get_logger, setup_logging
 from app.core.response import success_response
-from app.database.session import async_session_factory, engine
+from app.database import session as db_session
 from app.middleware.exception_handler import register_exception_handlers
 from app.middleware.logging_middleware import LoggingMiddleware
 from app.redis.client import close_redis, ping_redis
@@ -22,12 +22,16 @@ logger = get_logger("app.main")
 async def lifespan(app: FastAPI) -> AsyncGenerator[None, None]:
     logger.info("app_starting", app_name=settings.APP_NAME, environment=settings.ENVIRONMENT)
 
-    # Pre-warm Redis and Rule Cache
+    # 1. Initialize Database (Connects to PostgreSQL or auto-fallbacks to SQLite)
+    await db_session.init_db_connection()
+
+    # 2. Pre-warm Redis (Connects to Redis or auto-fallbacks to in-memory store)
     redis_healthy = await ping_redis()
     logger.info("redis_health_checked", healthy=redis_healthy)
 
+    # 3. Pre-warm Rule Cache
     try:
-        async with async_session_factory() as session:
+        async with db_session.async_session_factory() as session:
             await RuleCacheService.get_instance().refresh(session)
             logger.info("rule_cache_prewarmed")
     except Exception as exc:
@@ -37,7 +41,7 @@ async def lifespan(app: FastAPI) -> AsyncGenerator[None, None]:
 
     logger.info("app_shutting_down")
     await close_redis()
-    await engine.dispose()
+    await db_session.engine.dispose()
     logger.info("database_and_redis_connections_closed")
 
 
@@ -105,7 +109,7 @@ async def health_check():
 
     db_ok = False
     try:
-        async with async_session_factory() as session:
+        async with db_session.async_session_factory() as session:
             from sqlalchemy import text
             await session.execute(text("SELECT 1"))
             db_ok = True

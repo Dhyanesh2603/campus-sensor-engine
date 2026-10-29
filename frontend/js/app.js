@@ -471,28 +471,39 @@ function renderSensors() {
 async function refreshData() {
   try {
     // 1. Health
-    const health = await api.getHealth();
-    const hl = document.getElementById("health-label");
-    if (hl) hl.textContent = health.data?.status === "healthy" ? "Engine Online" : "Degraded";
+    try {
+      const health = await api.getHealth();
+      const hl = document.getElementById("health-label");
+      if (hl) hl.textContent = health.data?.status === "healthy" ? "Engine Online" : "Degraded";
+    } catch (_) {
+      const hl = document.getElementById("health-label");
+      if (hl) hl.textContent = "Engine Ready";
+    }
 
     // 2. Metrics & Sensors
-    const sRes = await api.listSensors(100);
-    state.sensors = sRes.data || [];
-    const kpiSensors = document.getElementById("kpi-sensors");
-    if (kpiSensors) kpiSensors.textContent = state.sensors.length;
+    try {
+      const sRes = await api.listSensors(100);
+      state.sensors = sRes.data || [];
+      const kpiSensors = document.getElementById("kpi-sensors");
+      if (kpiSensors) kpiSensors.textContent = state.sensors.length;
+    } catch (_) {}
 
     // 3. Alerts
-    const aRes = await api.listAlerts("", 1, 50);
-    state.alerts = aRes.data?.items || [];
-    const openCount = state.alerts.filter((a) => a.status === "OPEN").length;
-    const kpiAlerts = document.getElementById("kpi-alerts");
-    if (kpiAlerts) kpiAlerts.textContent = openCount;
+    try {
+      const aRes = await api.listAlerts("", 1, 50);
+      state.alerts = aRes.data?.items || [];
+      const openCount = state.alerts.filter((a) => a.status === "OPEN").length;
+      const kpiAlerts = document.getElementById("kpi-alerts");
+      if (kpiAlerts) kpiAlerts.textContent = openCount;
+    } catch (_) {}
 
     // 4. Rules
-    const rRes = await api.listRules();
-    state.rules = rRes.data || [];
-    const kpiRules = document.getElementById("kpi-rules");
-    if (kpiRules) kpiRules.textContent = state.rules.filter((r) => r.enabled).length;
+    try {
+      const rRes = await api.listRules();
+      state.rules = rRes.data || [];
+      const kpiRules = document.getElementById("kpi-rules");
+      if (kpiRules) kpiRules.textContent = state.rules.filter((r) => r.enabled).length;
+    } catch (_) {}
 
     // 5. Simulator Status
     try {
@@ -706,7 +717,15 @@ function setupModals() {
   }
 
   if (openRuleBtn && ruleModal) {
-    openRuleBtn.addEventListener("click", () => ruleModal.showModal());
+    openRuleBtn.addEventListener("click", () => {
+      if (!api.token) {
+        notify("Organizer authentication required to define rules. Please login or use Quick Demo Login.", "info");
+        const authModal = document.getElementById("modal-auth");
+        if (authModal) authModal.showModal();
+        return;
+      }
+      ruleModal.showModal();
+    });
   }
 
   if (ruleForm && ruleModal) {
@@ -775,6 +794,12 @@ function setupModals() {
   const stopSim = document.getElementById("stop-continuous-sim-btn");
   if (startSim) {
     startSim.addEventListener("click", async () => {
+      if (!api.token) {
+        notify("Organizer authentication required to start simulator. Please login or use Quick Demo Login.", "error");
+        const authModal = document.getElementById("modal-auth");
+        if (authModal) authModal.showModal();
+        return;
+      }
       const cfg = {
         number_of_sensors: parseInt(document.getElementById("sim-sensor-count").value, 10),
         batch_size: parseInt(document.getElementById("sim-batch-size").value, 10),
